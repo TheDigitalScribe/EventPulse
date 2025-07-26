@@ -15,6 +15,7 @@
     <modules>
         <module>producer-service</module>
         <module>analytics-service</module>
+        <module>validation-service</module>
         <module>event-model</module>
     </modules>
 </project>

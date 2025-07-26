@@ -14,19 +14,26 @@ import java.util.UUID;
 @Slf4j
 public class ProducerService {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, PurchaseEvent> kafkaTemplate;
     private final String topic;
 
-    public ProducerService(KafkaTemplate<String, Object> kafkaTemplate, @Value("${app.kafka.topic}") String topic) {
+    public ProducerService(KafkaTemplate<String, PurchaseEvent> kafkaTemplate, @Value("${app.kafka.topic}") String topic) {
         this.kafkaTemplate = kafkaTemplate;
         this.topic = topic;
     }
 
     public void sendEvent(PurchaseEvent event) {
-        String rawKey = event.getOrderId();
-        String key = (rawKey != null && !rawKey.isBlank()) ? rawKey : UUID.randomUUID().toString();
+        String originalKey = event.getOrderId();
+        String key;
 
-        ProducerRecord<String, Object> producerRecord = new ProducerRecord<>(topic, key, event);
+        if (originalKey != null && !originalKey.isBlank()) {
+            key = originalKey.trim();
+        } else {
+            key = UUID.randomUUID().toString();
+            event.setOrderId(key);
+        }
+
+        ProducerRecord<String, PurchaseEvent> producerRecord = new ProducerRecord<>(topic, key, event);
         producerRecord.headers().add(new RecordHeader("eventType", "PurchaseEvent".getBytes()));
         producerRecord.headers().add(new RecordHeader("source", "producer-service".getBytes()));
 

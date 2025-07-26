@@ -1,0 +1,20 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: validation-service
+  kafka:
+    bootstrap-servers: localhost:9092
+    security:
+      protocol: PLAINTEXT
+    consumer:
+      group-id: validation-group
+      auto-offset-reset: earliest
+
+app:
+  kafka:
+    topic:
+      input: purchase-events
+      valid: validated-purchases
+      dlt: dead-letter-purchases
