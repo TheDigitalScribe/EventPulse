@@ -1,4 +1,4 @@
-package com.thedigitalscribe.producer_service.model;
+package com.thedigitalscribe.model;
 
 import lombok.Data;
 

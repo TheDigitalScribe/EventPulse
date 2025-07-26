@@ -1,6 +1,6 @@
 package com.thedigitalscribe.producer_service.controller;
 
-import com.thedigitalscribe.producer_service.model.PurchaseEvent;
+import com.thedigitalscribe.model.PurchaseEvent;
 import com.thedigitalscribe.producer_service.service.ProducerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

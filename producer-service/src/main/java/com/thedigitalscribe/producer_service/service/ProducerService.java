@@ -1,11 +1,13 @@
 package com.thedigitalscribe.producer_service.service;
 
-import com.thedigitalscribe.producer_service.model.PurchaseEvent;
+import com.thedigitalscribe.model.PurchaseEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class ProducerService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
@@ -18,5 +20,6 @@ public class ProducerService {
 
     public void sendEvent(PurchaseEvent event) {
         kafkaTemplate.send(topic, event.getOrderId(), event);
+        log.info("Sent message: {}", event.getOrderId());
     }
 }
