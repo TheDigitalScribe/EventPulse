@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -23,34 +25,27 @@ public class ProducerService {
     }
 
     public void sendEvent(PurchaseEvent event) {
-        String originalKey = event.getOrderId();
-        String key;
-
-        if (originalKey != null && !originalKey.isBlank()) {
-            key = originalKey.trim();
-        } else {
-            key = UUID.randomUUID().toString();
-            event.setOrderId(key);
-        }
+        String key = event.getOrderId() != null ? event.getOrderId().trim() : UUID.randomUUID().toString();
+        event.setOrderId(key);
 
         ProducerRecord<String, PurchaseEvent> producerRecord = new ProducerRecord<>(topic, key, event);
-        producerRecord.headers().add(new RecordHeader("eventType", "PurchaseEvent".getBytes()));
-        producerRecord.headers().add(new RecordHeader("source", "producer-service".getBytes()));
+        producerRecord.headers()
+                .add(new RecordHeader("eventType", "PurchaseEvent".getBytes(StandardCharsets.UTF_8)))
+                .add(new RecordHeader("eventSource", "purchase-events".getBytes(StandardCharsets.UTF_8)))
+                .add(new RecordHeader("correlationId", UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8)))
+                .add(new RecordHeader("eventTimestamp", Instant.now().toString().getBytes(StandardCharsets.UTF_8)));
 
         kafkaTemplate.send(producerRecord)
                 .whenComplete((result, ex) -> {
                     if (ex == null) {
-                        log.info("Successfully sent event={} to topic={}, partition={}",
+                        log.info("Successfully sent event {} to {}-[partition {}] @offset {}",
                                 key,
                                 result.getRecordMetadata().topic(),
-                                result.getRecordMetadata().partition());
-
-                        log.info("event_producer: success, key={}, topic={}, partition={}, product={}, amount={}",
-                                key, result.getRecordMetadata().topic(),
                                 result.getRecordMetadata().partition(),
-                                event.getProduct(), event.getPrice() * event.getQuantity());
+                                result.getRecordMetadata().offset()
+                        );
                     } else {
-                        log.error("Failed to send event={} due to {}", key, ex.getMessage(), ex);
+                        log.error("Failed to send event {}: {}", key, ex.getMessage(), ex);
                     }
                 });
     }
