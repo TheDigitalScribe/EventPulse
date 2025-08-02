@@ -13,7 +13,7 @@
     </parent>
 
     <modules>
-        <module>producer-service</module>
+        <module>order-service</module>
         <module>analytics-service</module>
         <module>validation-service</module>
         <module>event-model</module>

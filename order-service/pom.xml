@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>producer-service</artifactId>
+	<artifactId>order-service</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>producer-service</name>
 	<description>Event producer for real-time data analytics</description>

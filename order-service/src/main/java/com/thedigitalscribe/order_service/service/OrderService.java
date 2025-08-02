@@ -1,4 +1,4 @@
-package com.thedigitalscribe.producer_service.service;
+package com.thedigitalscribe.order_service.service;
 
 import com.thedigitalscribe.model.PurchaseEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +14,15 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class ProducerService {
+public class OrderService {
 
     private final KafkaTemplate<String, PurchaseEvent> kafkaTemplate;
     private final String topic;
 
-    public ProducerService(KafkaTemplate<String, PurchaseEvent> kafkaTemplate, @Value("${app.kafka.topic}") String topic) {
+    private static final String EVENT_TYPE = "PurchaseEvent";
+    private static final String EVENT_SOURCE = "purchase-events";
+
+    public OrderService(KafkaTemplate<String, PurchaseEvent> kafkaTemplate, @Value("${app.kafka.topic}") String topic) {
         this.kafkaTemplate = kafkaTemplate;
         this.topic = topic;
     }
@@ -30,8 +33,8 @@ public class ProducerService {
 
         ProducerRecord<String, PurchaseEvent> producerRecord = new ProducerRecord<>(topic, key, event);
         producerRecord.headers()
-                .add(new RecordHeader("eventType", "PurchaseEvent".getBytes(StandardCharsets.UTF_8)))
-                .add(new RecordHeader("eventSource", "purchase-events".getBytes(StandardCharsets.UTF_8)))
+                .add(new RecordHeader("eventType", EVENT_TYPE.getBytes(StandardCharsets.UTF_8)))
+                .add(new RecordHeader("eventSource", EVENT_SOURCE.getBytes(StandardCharsets.UTF_8)))
                 .add(new RecordHeader("correlationId", UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8)))
                 .add(new RecordHeader("eventTimestamp", Instant.now().toString().getBytes(StandardCharsets.UTF_8)));
 

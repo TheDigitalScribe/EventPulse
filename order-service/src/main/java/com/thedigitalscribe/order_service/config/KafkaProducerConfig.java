@@ -1,4 +1,4 @@
-package com.thedigitalscribe.producer_service.config;
+package com.thedigitalscribe.order_service.config;
 
 import com.thedigitalscribe.model.PurchaseEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
