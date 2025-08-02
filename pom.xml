@@ -14,8 +14,7 @@
 
     <modules>
         <module>order-service</module>
-        <module>analytics-service</module>
-        <module>validation-service</module>
-        <module>event-model</module>
+        <module>inventory-service</module>
+        <module>common-model</module>
     </modules>
 </project>

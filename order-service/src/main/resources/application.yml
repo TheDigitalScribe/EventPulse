@@ -1,10 +1,10 @@
 spring:
   application:
-    name: Producer Service
+    name: Order Service
   kafka:
     security:
       protocol: PLAINTEXT
 
 app:
   kafka:
-    topic: purchase-events
+    topic: order-events

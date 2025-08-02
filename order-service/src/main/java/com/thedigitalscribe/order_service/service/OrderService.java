@@ -1,6 +1,6 @@
 package com.thedigitalscribe.order_service.service;
 
-import com.thedigitalscribe.model.PurchaseEvent;
+import com.thedigitalscribe.model.OrderEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -16,18 +16,18 @@ import java.util.UUID;
 @Slf4j
 public class OrderService {
 
-    private final KafkaTemplate<String, PurchaseEvent> kafkaTemplate;
+    private final KafkaTemplate<String, OrderEvent> kafkaTemplate;
     private final String topic;
 
-    private static final String EVENT_TYPE = "PurchaseEvent";
-    private static final String EVENT_SOURCE = "purchase-events";
+    private static final String EVENT_TYPE = "OrderEvent";
+    private static final String EVENT_SOURCE = "order-events";
 
-    public OrderService(KafkaTemplate<String, PurchaseEvent> kafkaTemplate, @Value("${app.kafka.topic}") String topic) {
+    public OrderService(KafkaTemplate<String, OrderEvent> kafkaTemplate, @Value("${app.kafka.topic}") String topic) {
         this.kafkaTemplate = kafkaTemplate;
         this.topic = topic;
     }
 
-    public void sendEvent(PurchaseEvent event) {
+    public void sendEvent(OrderEvent event) {
         String key;
 
         if (event.getOrderId() != null && !event.getOrderId().isBlank()) {
@@ -45,7 +45,7 @@ public class OrderService {
 
         String correlationId = UUID.randomUUID().toString();
 
-        ProducerRecord<String, PurchaseEvent> producerRecord = new ProducerRecord<>(topic, key, event);
+        ProducerRecord<String, OrderEvent> producerRecord = new ProducerRecord<>(topic, key, event);
         producerRecord.headers()
                 .add(new RecordHeader("eventType", EVENT_TYPE.getBytes(StandardCharsets.UTF_8)))
                 .add(new RecordHeader("eventSource", EVENT_SOURCE.getBytes(StandardCharsets.UTF_8)))

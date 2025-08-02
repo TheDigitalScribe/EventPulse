@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: Inventory Service
+
+app:
+  kafka:
+    topic: order-events
+
+server:
+  port: 8081

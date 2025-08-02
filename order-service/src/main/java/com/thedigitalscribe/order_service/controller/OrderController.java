@@ -1,6 +1,6 @@
 package com.thedigitalscribe.order_service.controller;
 
-import com.thedigitalscribe.model.PurchaseEvent;
+import com.thedigitalscribe.model.OrderEvent;
 import com.thedigitalscribe.order_service.dto.CreateOrderRequest;
 import com.thedigitalscribe.order_service.service.OrderService;
 import jakarta.validation.Valid;
@@ -24,7 +24,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<String> createOrder(@Valid @RequestBody CreateOrderRequest request) {
-        PurchaseEvent event = new PurchaseEvent();
+        OrderEvent event = new OrderEvent();
         event.setProduct(request.getProduct());
         event.setQuantity(request.getQuantity());
         event.setPrice(request.getPrice());
