@@ -28,28 +28,42 @@ public class OrderService {
     }
 
     public void sendEvent(PurchaseEvent event) {
-        String key = event.getOrderId() != null ? event.getOrderId().trim() : UUID.randomUUID().toString();
+        String key;
+
+        if (event.getOrderId() != null && !event.getOrderId().isBlank()) {
+            key = event.getOrderId().trim();
+        }
+        else {
+            key = UUID.randomUUID().toString();
+        }
+
         event.setOrderId(key);
+
+        if (event.getTimestamp() == null) {
+            event.setTimestamp(Instant.now());
+        }
+
+        String correlationId = UUID.randomUUID().toString();
 
         ProducerRecord<String, PurchaseEvent> producerRecord = new ProducerRecord<>(topic, key, event);
         producerRecord.headers()
                 .add(new RecordHeader("eventType", EVENT_TYPE.getBytes(StandardCharsets.UTF_8)))
                 .add(new RecordHeader("eventSource", EVENT_SOURCE.getBytes(StandardCharsets.UTF_8)))
-                .add(new RecordHeader("correlationId", UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8)))
-                .add(new RecordHeader("eventTimestamp", Instant.now().toString().getBytes(StandardCharsets.UTF_8)));
+                .add(new RecordHeader("correlationId", correlationId.getBytes(StandardCharsets.UTF_8)))
+                .add(new RecordHeader("eventTimestamp", event.getTimestamp().toString().getBytes(StandardCharsets.UTF_8)));
 
         kafkaTemplate.send(producerRecord)
                 .whenComplete((result, ex) -> {
                     if (ex == null) {
-                        log.info("Successfully sent event {} to {}-[partition {}] @offset {}",
+                        log.info("Successfully sent event {} to {}-[partition {}] @offset {} (correlationId={})",
                                 key,
                                 result.getRecordMetadata().topic(),
                                 result.getRecordMetadata().partition(),
-                                result.getRecordMetadata().offset()
+                                result.getRecordMetadata().offset(),
+                                correlationId
                         );
                     } else {
-                        log.error("Failed to send event {}: {}", key, ex.getMessage(), ex);
-                    }
+                        log.error("Failed to send event {} (correlationId={}): {}", key, correlationId, ex.getMessage(), ex);                    }
                 });
     }
 }
