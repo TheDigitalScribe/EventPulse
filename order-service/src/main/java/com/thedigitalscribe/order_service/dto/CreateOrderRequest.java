@@ -5,10 +5,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
 public class CreateOrderRequest {
+
     @NotBlank(message = "Product name is required")
     private String product;
 
@@ -16,7 +18,7 @@ public class CreateOrderRequest {
     private int quantity;
 
     @DecimalMin(value = "0.01", message = "Price must be greater than 0")
-    private double price;
+    private BigDecimal price;
 
     private Instant timestamp;
 }

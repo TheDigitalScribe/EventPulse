@@ -2,6 +2,7 @@ package com.thedigitalscribe.inventory_service.service;
 
 import com.thedigitalscribe.model.OrderEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 

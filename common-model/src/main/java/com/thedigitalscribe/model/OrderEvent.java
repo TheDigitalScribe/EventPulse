@@ -6,10 +6,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
 public class OrderEvent {
+
     @NotBlank
     private String orderId;
 
@@ -20,7 +22,7 @@ public class OrderEvent {
     private int quantity;
 
     @DecimalMin("0.01")
-    private double price;
+    private BigDecimal price;
 
     @NotNull
     private Instant timestamp;
